@@ -15,4 +15,13 @@ class OrderObserver < ActiveRecord::Observer
 	def self.process
 		@@recommender.process!
 	end
+
+	def self.all_recommendations
+		@@recommender ||= ProductRecommender.new
+		@@recommender.all_items.each do |p_id|
+			recs = @@recommender.for(p_id)
+			next if recs.empty?
+			puts "#{p_id} : #{recs.map(&:item_id).join(', ')}"
+		end
+	end
 end
