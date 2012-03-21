@@ -13,6 +13,7 @@ namespace :spree do
         end
       end 
 
+      desc "Process initial recommendation"
       task :process_recommend => :environment do
         @search = Order.search
         @search.completed_at_not_null
