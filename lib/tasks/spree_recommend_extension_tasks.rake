@@ -15,19 +15,20 @@ namespace :spree do
 
       desc "Process initial recommendation"
       task :process_recommend => :environment do
-        @search = Order.search
-        @search.completed_at_not_null
+        user_items = Hash.new{ |h,k| h[k]=[] }
 
-        @recommender = ProductRecommender.new
-
-        @search.each do |o|
-          puts "Adding order #{o.number} with #{o.line_items.size}"
-          @recommender.order_items.add_set(o.id, o.line_items.map{|i| i.product.id})
+        Order.all(:conditions => "completed_at is not null").each do |o|
+          p_ids = o.line_items.select{|i| i.variant.product.has_stock?}.map{|i| i.variant.product.id}
+          user_items[o.user_id].concat(p_ids)
         end
 
-        @recommender.process!        
-      end
+        user_items.each do |u_id, product_ids|
+          puts "Adding user_id #{u_id} with #{product_ids.size}"
+          OrderObserver.recommend(u_id, product_ids)
+        end
 
+        OrderObserver.process
+      end
     end
   end
 end

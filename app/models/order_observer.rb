@@ -3,13 +3,13 @@ class OrderObserver < ActiveRecord::Observer
 		return if !o.completed_at_changed?
 		return if o.completed_at.blank?
 
-		OrderObserver.recommend(o.id, o.line_items.map{|i| i.product.id})
+		OrderObserver.recommend(o.user_id, o.line_items.map{|i| i.product.id})
 		OrderObserver.process
 	end
 
-	def self.recommend(order_id, product_ids)
+	def self.recommend(user_id, product_ids)
 		@@recommender ||= ProductRecommender.new
-		@@recommender.order_items.add_set(order_id, product_ids)
+		@@recommender.order_items.add_set(user_id, product_ids)
 	end
 
 	def self.process
