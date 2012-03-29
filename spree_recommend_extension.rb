@@ -14,10 +14,6 @@ class SpreeRecommendExtension < Spree::Extension
   end
   
   def activate
-
-    # make your helper avaliable in all views
-    # Spree::BaseController.class_eval do
-    #   helper YourHelper
-    # end
+    Order.send(:include, Spree::Models::OrderWithRecommend)
   end
 end
