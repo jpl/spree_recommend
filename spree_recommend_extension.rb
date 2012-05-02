@@ -10,7 +10,7 @@ class SpreeRecommendExtension < Spree::Extension
 
   def self.require_gems(config)
     config.gem "redis", :version => '2.2.2'
-    config.gem "recommendify", :version => '0.3.1'
+    config.gem "recommendify"
   end
   
   def activate
